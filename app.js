@@ -1,14 +1,38 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 dotenv.config();
 
-// db connection
+// DB connection
 mongoose.connect(process.env.MONGO_CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
     .then(() => console.log("Database Connection Successful"))
     .catch(err => console.log(err))
+
+// request parsers
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+
+// ser View Engine
+app.set('view engine', 'ejs')
+
+// set static folder
+app.use(express.static(path.join(__dirname, 'public')))
+
+// parse Cookies
+app.use(cookieParser(process.env.COOKIE_SECRET));
+
+// routing setup
+
+// error handling
+
+app.listen(process.env.PORT, () => {
+    console.log(`App listening on http://${process.env.HOSTNAME}:${process.env.PORT}`)
+});
+
